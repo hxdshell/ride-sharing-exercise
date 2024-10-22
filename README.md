@@ -4,6 +4,12 @@
 - [Thank You](https://github.com/ashishps1/awesome-low-level-design)
 
 ## Requirements
+- [ ] Database 
+- [ ] Security
+- [ ] Registration and User Management
+
+<hr>
+
 - [ ] The ride sharing service should allow passengers to request rides and drivers to accept and fulfill those ride requests.
 - [ ] Passengers should be able to specify their pickup location, destination, and desired ride type (e.g., regular, premium).
 - [ ] Drivers should be able to see available ride requests and choose to accept or decline them.

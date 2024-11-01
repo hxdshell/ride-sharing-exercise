@@ -38,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter{
         String header = request.getHeader("Authorization");
         
         if(header == null || !header.startsWith("Bearer ")){
-            System.out.println("Invalid 'Authorization' header \n " + header);
             SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;

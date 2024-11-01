@@ -2,7 +2,9 @@ package com.uber.uber.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,9 @@ import com.uber.uber.entities.DriverEntity;
 import com.uber.uber.entities.PassengerEntity;
 import com.uber.uber.entities.UserEntity;
 import com.uber.uber.records.UserGeneral;
+import com.uber.uber.records.UserLogin;
 import com.uber.uber.repositories.UserRepo;
+import com.uber.uber.services.JwtService;
 import com.uber.uber.services.UserService;
 
 import java.util.NoSuchElementException;
@@ -21,19 +25,31 @@ import java.util.NoSuchElementException;
 @RequestMapping("/users")
 public class UserController {
     
-    private UserRepo userRepo;
     private UserService userService;
+    private AuthenticationManager authenticationManager;
+    private JwtService jwtService;
 
     @Autowired
-    public UserController(UserRepo userRepo, UserService userService){
-        this.userRepo = userRepo;
+    public UserController(UserRepo userRepo, UserService userService,AuthenticationManager authenticationManager,JwtService jwtService){
         this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
-    @GetMapping("/find")
-    public String find(){
-        UserEntity user = userRepo.findById(2).get();
-        return user.getId() + " " + user.getUsername() + " " + user.getPassword();
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody UserLogin credentials){
+        try{
+            Authentication authRequest = UsernamePasswordAuthenticationToken.unauthenticated(credentials.username(),credentials.password());
+            Authentication auth = this.authenticationManager.authenticate(authRequest);
+            
+            System.out.println(auth); //----
+
+            String token = jwtService.generateToken(credentials.username());
+            return ResponseEntity.ok().body(token);
+        }
+        catch(Exception ex){
+            return ResponseEntity.status(401).body("Failed");
+        }
     }
 
     @PostMapping("/register")

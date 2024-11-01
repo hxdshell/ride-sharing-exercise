@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> {
                     authorize
                             .requestMatchers("/users/login", "/users/register").permitAll()
+                            .requestMatchers("/driver/**").hasRole("DRIVER")
                             .anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)

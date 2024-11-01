@@ -1,4 +1,4 @@
-package com.uber.uber.Entities;
+package com.uber.uber.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 

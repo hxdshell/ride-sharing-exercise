@@ -4,9 +4,8 @@
 - [Thank You](https://github.com/ashishps1/awesome-low-level-design)
 
 ## Requirements
-- [ ] Database 
-- [ ] Security
-- [ ] Registration and User Management
+- [x] Database 
+- [ ] Security & User Management
 
 <hr>
 

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.uber.uber.Entities.PassengerEntity;
+import com.uber.uber.entities.PassengerEntity;
 
 public interface PassengerRepo extends CrudRepository<PassengerEntity, UUID>{
 }

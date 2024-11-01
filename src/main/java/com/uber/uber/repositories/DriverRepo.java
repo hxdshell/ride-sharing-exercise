@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.uber.uber.Entities.DriverEntity;
+import com.uber.uber.entities.DriverEntity;
 
 
 public interface DriverRepo extends CrudRepository<DriverEntity, UUID>{

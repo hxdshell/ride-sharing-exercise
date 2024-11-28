@@ -39,7 +39,11 @@ public class JwtFilter extends OncePerRequestFilter{
         
         if(header == null || !header.startsWith("Bearer ")){
             SecurityContextHolder.clearContext();
-            filterChain.doFilter(request, response);
+            response.setStatus(401);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                "{\"error\": \"Invalid or expired token\"}"
+            );
             return;
         }
         final String jwt;
@@ -55,8 +59,12 @@ public class JwtFilter extends OncePerRequestFilter{
                 try{
                     userDetails = userDetailsService.loadUserByUsername(username);
                 }catch(UsernameNotFoundException ex){
-                    System.out.println("filter wrong username");
-                    filterChain.doFilter(request, response);
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write(
+                        "{\"error\": \"Invalid User\"}"
+                    );
+                    return;
                 }
                 if(jwtService.isTokenValid(jwt, userDetails.getUsername())){
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -65,8 +73,12 @@ public class JwtFilter extends OncePerRequestFilter{
                 }
             }
         }catch(JwtException ex){
-            System.out.println("invalid token");
-            filterChain.doFilter(request, response);
+            response.setStatus(401);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                "{\"error\": \"Authentication Failed\"}"
+            );
+            return;
         }
         filterChain.doFilter(request, response);
     }

@@ -39,13 +39,10 @@ public class JwtFilter extends OncePerRequestFilter{
         
         if(header == null || !header.startsWith("Bearer ")){
             SecurityContextHolder.clearContext();
-            response.setStatus(401);
-            response.setContentType("application/json");
-            response.getWriter().write(
-                "{\"error\": \"Invalid or expired token\"}"
-            );
+            filterChain.doFilter(request, response);
             return;
         }
+
         final String jwt;
         String username = null;
 
@@ -56,16 +53,9 @@ public class JwtFilter extends OncePerRequestFilter{
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = null;
-                try{
-                    userDetails = userDetailsService.loadUserByUsername(username);
-                }catch(UsernameNotFoundException ex){
-                    response.setStatus(401);
-                    response.setContentType("application/json");
-                    response.getWriter().write(
-                        "{\"error\": \"Invalid User\"}"
-                    );
-                    return;
-                }
+                
+                userDetails = userDetailsService.loadUserByUsername(username);
+                
                 if(jwtService.isTokenValid(jwt, userDetails.getUsername())){
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -76,8 +66,17 @@ public class JwtFilter extends OncePerRequestFilter{
             response.setStatus(401);
             response.setContentType("application/json");
             response.getWriter().write(
-                "{\"error\": \"Authentication Failed\"}"
+              "{\"error\": \"Invalid Token\"}"
             );
+
+            return;
+        }catch(Exception ex){
+            response.setStatus(401);
+            response.setContentType("application/json");
+            response.getWriter().write(
+              "{\"error\": \"Authentication Failed\"}"
+            );
+
             return;
         }
         filterChain.doFilter(request, response);

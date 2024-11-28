@@ -1,4 +1,4 @@
-package com.uber.uber.Controllers;
+package com.uber.uber.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

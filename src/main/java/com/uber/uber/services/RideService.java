@@ -1,8 +1,11 @@
 package com.uber.uber.services;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.geolatte.geom.G2D;
 import org.geolatte.geom.Geometries;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.uber.uber.entities.RideEntity;
 import com.uber.uber.records.RideReqest;
+import com.uber.uber.records.RideSearch;
+import com.uber.uber.records.RideSearchDriverDTO;
 import com.uber.uber.repositories.RideRepo;
 
 @Service
@@ -46,5 +51,35 @@ public class RideService {
         RideEntity saved = rideRepo.save(rideEntity);
 
         return saved.getId();
+    }
+    public List<RideSearchDriverDTO> proximitySearch(RideSearch params){
+        
+        double lon = params.longitude();
+        double lat = params.latitude();
+        double dist = params.distance();
+        
+        List<Object[]> rows = rideRepo.findByProximity(lon,lat,dist);
+
+        Long id;
+        Integer userId;
+        String username;
+        double[] pickLocation = new double[2];
+        LocalDateTime pickupTime;
+        String rideType;
+
+        List<RideSearchDriverDTO> rides = new ArrayList<>();
+
+        for (Object[] row : rows) {
+            id = (Long) row[0];
+            userId = (Integer) row[1];
+            username = (String) row[2];
+            ((Point<?>)row[3]).getPosition().toArray(pickLocation);
+            pickupTime = ((Timestamp) row[4]).toLocalDateTime();
+            rideType = (String) row[5];
+
+            rides.add(new RideSearchDriverDTO(id, userId, username, pickLocation, pickupTime, rideType));
+        }
+        
+        return rides;
     }
 }

@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.uber.uber.entities.RideEntity;
+import com.uber.uber.records.RideAccept;
 import com.uber.uber.records.RideReqest;
 import com.uber.uber.records.RideSearch;
 import com.uber.uber.records.RideSearchDriverDTO;
 import com.uber.uber.repositories.RideRepo;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class RideService {
@@ -81,5 +84,14 @@ public class RideService {
         }
         
         return rides;
+    }
+
+    @Transactional    
+    public int acceptRide(RideAccept details){
+        UUID driver = UUID.fromString(details.driverId());
+        Long rideId = details.rideId();
+        
+        int rows = rideRepo.setRideDriver(driver, rideId);
+        return rows;
     }
 }

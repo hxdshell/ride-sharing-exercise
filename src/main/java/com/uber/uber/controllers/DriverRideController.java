@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.uber.uber.records.RideAccept;
 import com.uber.uber.records.RideSearch;
 import com.uber.uber.records.RideSearchDriverDTO;
 import com.uber.uber.services.RideService;
@@ -34,6 +35,28 @@ public class DriverRideController {
         } catch (Exception e) {
             HashMap<String,String> response = new HashMap<>();
             response.put("error", "Unable to fetch current rides.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<Object> accept(@RequestBody RideAccept request){
+        
+        HashMap<String,String> response = new HashMap<>();
+        
+        try {
+            int rows = rideService.acceptRide(request);
+            if (rows != 1){
+                response.put("error", "Unable to find the ride");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+            response.put("success", "Ride accepted succefully");
+            return ResponseEntity.ok().body(response);
+
+        } catch (Exception e) {
+            System.out.println(e);
+            response.put("error", "Unable to accept the ride");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

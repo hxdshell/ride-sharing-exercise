@@ -1,7 +1,9 @@
 package com.uber.uber.repositories;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,8 @@ public interface RideRepo extends CrudRepository<RideEntity,Long>{
         @Param("lon") double lon, 
         @Param("lat") double lat, 
         @Param("dist") double distance);
+
+    @Modifying
+    @Query(value = "UPDATE rides SET driver = :driver, ride_status = 'ACCEPTED' WHERE id = :rideId AND ride_status = 'PENDING'; ", nativeQuery = true)
+    int setRideDriver(@Param("driver") UUID driver, @Param("rideId") Long rideId);
 }

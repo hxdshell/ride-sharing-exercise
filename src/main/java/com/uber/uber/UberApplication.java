@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class UberApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UberApplication.class, args);
+		SpringApplication application = new SpringApplication(UberApplication.class);
+		// application.setBannerMode(Banner.Mode.OFF);
+		application.run(args);
 	}
 
 }

@@ -1,0 +1,29 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://db:5432/ride_sharing
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - /mnt/disk/dockerdata/ride_sharng_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=ride_sharing
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=uber
+      - POSTGRES_URL=jdbc:postgresql://db:5432/ride_sharing
+
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
